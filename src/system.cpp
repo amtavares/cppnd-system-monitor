@@ -24,7 +24,7 @@ Processor& System::Cpu() {
 
 // DONE: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
-    
+
   processes_.clear();
 
   vector<int> allPids = LinuxParser::Pids();
@@ -35,6 +35,7 @@ vector<Process>& System::Processes() {
   }
 
   std::sort(processes_.begin(), processes_.end());
+  // Reversing to get the vector in descending order
   std::reverse(processes_.begin(), processes_.end());
 
   return processes_;

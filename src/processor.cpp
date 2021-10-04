@@ -8,6 +8,13 @@ using std::string;
 // DONE: Return the aggregate CPU utilization
 float Processor::Utilization() {
   /*
+   The calculation method implemented in this function is mainly based on the answers from user Vangelis Tasoulas here:
+   https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
+  
+  */
+
+  /*
+
    Values in cpuData vector:
     0 user
     1 nice
