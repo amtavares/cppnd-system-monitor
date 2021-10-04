@@ -12,9 +12,11 @@ string Format::ElapsedTime(long seconds) {
 
     int hours, minutes;
 
-    hours = seconds / 3600;
+    //One hour has 3600 seconds
+    hours = seconds / 3600;    
     seconds = seconds % 3600;
     
+    //One minute has 60 seconds
     minutes = seconds / 60;
     seconds = seconds % 60;
 

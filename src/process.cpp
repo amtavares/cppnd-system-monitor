@@ -17,6 +17,11 @@ int Process::Pid() {
 
 // DONE: Return this process's CPU utilization
 float Process::CpuUtilization() const { 
+    /*
+    - The calculation method in this function is described in
+    https://stackoverflow.com/questions/16726779/how-do-i-get-the-total-cpu-usage-of-an-application-from-proc-pid-stat/16736599#16736599
+    - Removed the "100*" in the cpuUsage variable calculation because this multiplication is already done in ncurses_display.cpp
+    */
 
     float totalTime, seconds, cpuUsage;
     float utime, stime, cutime, cstime, starttime;
