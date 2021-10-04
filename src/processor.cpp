@@ -1,36 +1,69 @@
 #include "processor.h"
+
 #include "linux_parser.h"
+#include "string"
+
+using std::string;
 
 // DONE: Return the aggregate CPU utilization
-float Processor::Utilization() { 
-    long totalOld, totalNew, activeNew, idleOld, idleNew;
-    totalNew = CurrentTotal();
-    activeNew = CurrentActive();
-    idleNew = CurrentIdle();
-    totalOld = PrevTotal();
-    idleOld = PrevIdle();
+float Processor::Utilization() {
+  /*
+   Values in cpuData vector:
+    0 user
+    1 nice
+    2 system
+    3 idle
+    4 iowait
+    5 irq
+    6 softirq
+    7 steal
+    8 guest
+    9 guest_nice
+  */
 
-    Update(idleNew, activeNew, totalNew);
+  float utilization, deltaTotal, deltaIdle;
+  float currentIdle, currentIoWait, currentUser, currentNice, currentSystem,
+      currentIrq, currentSoftIrq, currentSteal;
+  float currentTotal, currentTotalIdle, currentTotalNonIdle;
+  float prevTotalNonIdle, prevTotal, prevTotalIdle;
 
-    float totalDif = float(totalNew) - float(totalOld);
-    float idleDif = float(idleNew) - float(idleOld);
+  std::vector<string> cpuData = LinuxParser::CpuUtilization();
 
-    float utilization = (totalDif - idleDif)/totalDif;
+  currentUser = std::stof(cpuData[0]);
+  currentNice = std::stof(cpuData[1]);
+  currentSystem = std::stof(cpuData[2]);
+  currentIdle = std::stof(cpuData[3]);
+  currentIoWait = std::stof(cpuData[4]);
+  currentIrq = std::stof(cpuData[5]);
+  currentSoftIrq = std::stof(cpuData[6]);
+  currentSteal = std::stof(cpuData[7]);
 
-    return utilization;
+  prevTotalIdle = prevIdle_ + prevIoWait_;
+  currentTotalIdle = currentIdle + currentIoWait;
 
- }
+  prevTotalNonIdle = prevUser_ + prevNice_ + prevSystem_ + prevIrq_ +
+                     prevSoftIrq_ + prevSteal_;
+  currentTotalNonIdle = currentUser + currentNice + currentSystem + currentIrq +
+                        currentSoftIrq + currentSteal;
 
- long Processor::CurrentTotal() {return LinuxParser:: Jiffies(); }
- long Processor::CurrentActive() {return LinuxParser::ActiveJiffies();}
- long Processor::CurrentIdle() {return LinuxParser::IdleJiffies();}
- long Processor::PrevTotal() {return total_; }
- long Processor::PrevActive() {return active_;}
- long Processor::PrevIdle() {return idle_; }
- void Processor::Update(long idle, long active, long total) {
-     idle_ = idle;
-     active_ = active;
-     total_ = total;
- }
+  prevTotal = prevTotalIdle + prevTotalNonIdle;
+  currentTotal = currentTotalIdle + currentTotalNonIdle;
 
+  // diferentiate
+  deltaTotal = currentTotal - prevTotal;
+  deltaIdle = currentTotalIdle - prevTotalIdle;
 
+  utilization = (deltaTotal - deltaIdle) / deltaTotal;
+
+  // Saving values
+  prevIdle_ = currentIdle;
+  prevIoWait_ = currentIoWait;
+  prevUser_ = currentUser;
+  prevNice_ = currentNice;
+  prevSystem_ = currentSystem;
+  prevIrq_ = currentIrq;
+  prevSoftIrq_ = currentSoftIrq;
+  prevSteal_ = currentSteal;
+
+  return utilization;
+}

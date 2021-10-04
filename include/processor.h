@@ -4,19 +4,18 @@
 class Processor {
  public:
   float Utilization();  // DONE: See src/processor.cpp
-  long CurrentTotal();
-  long CurrentActive();
-  long CurrentIdle();
-  long PrevTotal();
-  long PrevIdle();
-  long PrevActive();
-  void Update(long idle, long active, long total);
+
 
   // DONE: Declare any necessary private members
  private:
-    long idle_;
-    long active_;
-    long total_;
+    float prevIdle_ = 0.0;
+    float prevIoWait_ = 0.0;
+    float prevUser_ = 0.0;
+    float prevNice_ = 0.0; 
+    float prevSystem_ = 0.0; 
+    float prevIrq_ = 0.0;
+    float prevSoftIrq_ = 0.0;
+    float prevSteal_ = 0.0;
 };
 
 #endif
